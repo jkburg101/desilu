@@ -1,0 +1,33 @@
+{
+  "name": "desilu",
+  "version": "1.0.0",
+  "description": "Desilu is a Javascript library for making on-the-fly design changes to your website during development time.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jkburg101/desilu.git"
+  },
+  "keywords": [
+    "design",
+    "css",
+    "javascript"
+  ],
+  "author": "jkburg101",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jkburg101/desilu/issues"
+  },
+  "homepage": "https://github.com/jkburg101/desilu#readme",
+  "devDependencies": {
+    "@types/jest": "^23.3.5",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.4",
+    "typescript": "^3.1.3"
+  },
+  "dependencies": {
+    "eslint": "^5.7.0"
+  }
+}
