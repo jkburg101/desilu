@@ -1,8 +1,8 @@
-﻿# Desilu is a Javascript library for making on-the-fly design changes to your website during development time.
+﻿## Desilu is a Javascript library for making on-the-fly design changes to your website during development time.
 
 When Desilu is enabled on your site, you can simply right-click on elements to cause a popup box to appear, letting you change the css of that element. 
 
-## How to use Desilu
+### How to use Desilu
 
 Integrating Desilu onto your site couldn't be any more simple.
 
@@ -14,12 +14,12 @@ npm install desilu
 
 Then, provide just a single require/import in your code.
 
-## Javascript
+### Javascript
 ```javascript
 require('desilu');
 ```
 
-## Typescript
+### Typescript
 ```typescript
 import 'desilu';
 ```
