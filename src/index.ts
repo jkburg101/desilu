@@ -1,12 +1,14 @@
 import * as AColorPicker from "a-color-picker";
 import css from "./desilu-main.css";
 import html from "./desilu-main.html";
+import {cssProperties, CSSStyle, VALUE_TYPE} from "./types/css-style";
 
 const allElements = document.getElementsByTagName("*");
 
 let currentPopup: HTMLDivElement;
 let currentlySelectedProperty: string;
 let colorPicker: AColorPicker.ACPController;
+const propertyNames = cssProperties.map((it) => it.name);
 
 window.addEventListener("resize", (event) => {
     removeExistingPopups();
@@ -40,7 +42,7 @@ function addPopupBox(targetElement: HTMLElement) {
         (it as HTMLElement).onclick = () => {
             currentlySelectedProperty = it.innerHTML;
             removeCurrentColorPicker();
-            addColorPicker(".desilu-content-details", targetElement, currentlySelectedProperty);
+            addPropertyChoices(".desilu-content-details", targetElement, currentlySelectedProperty);
         };
     });
     // coordinates must be calculated after width of popup is determined
@@ -66,15 +68,10 @@ function addCSS() {
 
 function getRenderedHTML() {
     return html.replace("${listItems}",
-        getListItems(
-            "background-color",
-            "color",
-            "background-color",
-            "display",
-            "background-color"));
+        getListItems(propertyNames));
 }
 
-function getListItems(...cssProperty: string[]) {
+function getListItems(cssProperty: string[]) {
     let items = "";
     cssProperty.forEach((it) => {
         items += `<li class="desilu-list-item">${it}</li>`;
@@ -88,9 +85,31 @@ function removeCurrentColorPicker() {
     }
 }
 
+function addPropertyChoices(layout: string, targetElement: HTMLElement, targetElementProperty: string) {
+    const property = cssProperties[propertyNames.indexOf(currentlySelectedProperty)];
+    if (property.valueType === VALUE_TYPE.COLOR) {
+        addColorPicker(layout, targetElement, targetElementProperty);
+    } else if (property.valueType === VALUE_TYPE.DEFINED) {
+        const choicesDiv = document.querySelector(layout);
+        if (choicesDiv) {
+            let choiceItems = "<ul>";
+            property.values.forEach((it) => choiceItems += `<li class="desilu-choice-item">${it}</li>`);
+            choicesDiv.innerHTML = choiceItems + "</ul>";
+
+            document.querySelectorAll(".desilu-choice-item").forEach((it) => {
+                (it as HTMLElement).onclick = () => (targetElement.style as any)[targetElementProperty] = it.innerHTML;
+            });
+        }
+    }
+}
+
 function addColorPicker(layout: string, targetElement: HTMLElement, targetElementProperty: string) {
     if (!layout) {
         throw new Error("No 'desilu-content-details' element to attach color picker to");
+    }
+    const choicesDiv = document.querySelector(layout);
+    if (choicesDiv) {
+        choicesDiv.innerHTML = "";
     }
     colorPicker = AColorPicker.createPicker({
         attachTo: layout,
