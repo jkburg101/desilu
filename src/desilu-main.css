@@ -1,4 +1,5 @@
 .desilu-main-popup {
+    height: 400px;
     margin: 8px;
     display: flex;
     flex-direction: column;
@@ -11,6 +12,8 @@
 
 .desilu-popup-header {
     display: flex;
+    margin-bottom: 16px;
+    flex-basis: 10%;
     flex-direction: row;
 }
 
@@ -22,8 +25,8 @@
     width: 100%;
     padding-top: 4px;
     padding-bottom: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
     color: #888888;
 }
 
@@ -36,20 +39,42 @@
 .desilu-popup-content {
     display: flex;
     flex-direction: row;
+    flex-basis: 90%;
 }
 
 .desilu-content-list {
-
+    overflow: scroll;
 }
 
 .desilu-list-item {
-    padding: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
 }
 
 .desilu-content-details {
-
+    overflow: scroll;
 }
 
 .desilu-choice-item {
-    padding: 8px
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+}
+
+/*SCROLLBARS*/
+::-webkit-scrollbar
+{
+  width: 6px;  /* for vertical scrollbars */
+  height: 6px; /* for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track
+{
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb
+{
+  background: rgba(0, 0, 0, 0.5);
 }

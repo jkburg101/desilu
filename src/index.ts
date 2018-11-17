@@ -9,6 +9,7 @@ let currentPopup: HTMLDivElement;
 let currentlySelectedProperty: string;
 let colorPicker: AColorPicker.ACPController;
 const propertyNames = cssProperties.map((it) => it.name);
+let currentlyVisiblePropertyNames = propertyNames.slice();
 
 window.addEventListener("resize", (event) => {
     removeExistingPopups();
@@ -21,6 +22,7 @@ for (const eachElement of allElements) {
         event.preventDefault();
         event.stopPropagation();
         const element = event.target as HTMLSelectElement;
+        console.log(getComputedStyle(element));
         addPopupBox(element);
         return false;
     }, false);
@@ -33,6 +35,7 @@ function addPopupBox(targetElement: HTMLElement) {
     currentPopup.className += " desilu-main-popup";
     currentPopup.innerHTML = getRenderedHTML();
     document.getElementsByTagName("body")[0].appendChild(currentPopup);
+    enableSearch();
     const closeButton = document.querySelector(".desilu-header-x") as HTMLElement;
     if (closeButton) {
         closeButton.onclick = () => removeExistingPopups();
@@ -68,7 +71,7 @@ function addCSS() {
 
 function getRenderedHTML() {
     return html.replace("${listItems}",
-        getListItems(propertyNames));
+        getListItems(currentlyVisiblePropertyNames));
 }
 
 function getListItems(cssProperty: string[]) {
@@ -119,4 +122,18 @@ function addColorPicker(layout: string, targetElement: HTMLElement, targetElemen
     colorPicker.onchange = (picker) => {
         (targetElement.style as any)[targetElementProperty] = picker.color.toString();
     };
+}
+
+function enableSearch() {
+    const searchText = document.querySelector(".desilu-header-searchbox") as HTMLInputElement;
+    if (searchText) {
+        searchText.oninput = () => {
+            currentlyVisiblePropertyNames = propertyNames;
+            currentlyVisiblePropertyNames = currentlyVisiblePropertyNames.filter((it) => {
+                return it.indexOf(searchText.value) !== -1;
+            });
+            const list = document.querySelector(".desilu-content-list") as HTMLElement;
+            list.innerHTML = `<ul>${getListItems(currentlyVisiblePropertyNames)}</ul>`;
+        };
+    }
 }

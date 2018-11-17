@@ -34,5 +34,15 @@ export const cssProperties =
         new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
         new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
         new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
+        new CSSStyle("background-color", VALUE_TYPE.COLOR, []),
 
     ];

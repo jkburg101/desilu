@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "copyFiles": "copyfiles --up 1 src/**/*.html src/**/*.css dist",
-    "build": "tsc && npm run copyFiles",
+    "build": "npm run copyFiles && tsc",
     "clean": "rimraf dist",
     "watch": "watch \"npm run build\" src"
   },
