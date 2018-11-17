@@ -1,15 +1,18 @@
 import * as AColorPicker from "a-color-picker";
+import css from "./desilu-main.css";
 import html from "./desilu-main.html";
 
 const allElements = document.getElementsByTagName("*");
 
 let currentPopup: HTMLDivElement;
-
-console.log(html);
+let currentlySelectedProperty: string;
+let colorPicker: AColorPicker.ACPController;
 
 window.addEventListener("resize", (event) => {
     removeExistingPopups();
 });
+
+addCSS();
 
 for (const eachElement of allElements) {
     eachElement.addEventListener("contextmenu", (event) => {
@@ -25,12 +28,21 @@ function addPopupBox(targetElement: HTMLElement) {
     removeExistingPopups();
     const elementCoordinates = targetElement.getBoundingClientRect();
     currentPopup = document.createElement("div");
-    setBasePopupStyle(currentPopup);
+    currentPopup.className += " desilu-main-popup";
+    currentPopup.innerHTML = getRenderedHTML();
     document.getElementsByTagName("body")[0].appendChild(currentPopup);
-    currentPopup.appendChild(getSearchBox());
-    // addColorPicker(currentPopup, targetElement);
-    currentPopup.appendChild(getCloseIcon());
-    currentPopup.appendChild(getAttributeList());
+    const closeButton = document.querySelector(".desilu-header-x") as HTMLElement;
+    if (closeButton) {
+        closeButton.onclick = () => removeExistingPopups();
+    }
+    const allPropertyItems = document.querySelectorAll(".desilu-list-item");
+    allPropertyItems.forEach((it) => {
+        (it as HTMLElement).onclick = () => {
+            currentlySelectedProperty = it.innerHTML;
+            removeCurrentColorPicker();
+            addColorPicker(".desilu-content-details", targetElement, currentlySelectedProperty);
+        };
+    });
     // coordinates must be calculated after width of popup is determined
     const bottom = Math.floor(elementCoordinates.bottom);
     const centerOfTarget = Math.floor(elementCoordinates.left) + elementCoordinates.width / 2;
@@ -39,85 +51,53 @@ function addPopupBox(targetElement: HTMLElement) {
     currentPopup.style.left = `${left}px`;
 }
 
-function setBasePopupStyle(popup: HTMLDivElement) {
-    popup.style.background = "white";
-    popup.style.position = "absolute";
-    popup.style.boxShadow = "0 4px 10px rgba(0,0,0,.4)";
-    popup.style.padding = "8px";
-    popup.style.borderRadius = "16px";
-    popup.style.display = "flex";
-}
-
 function removeExistingPopups() {
     if (currentPopup && currentPopup.parentElement) {
         currentPopup.parentElement.removeChild(currentPopup);
     }
 }
 
-function getCloseIcon() {
-    const closeIcon = document.createElement("p");
-    closeIcon.innerText = "x";
-    closeIcon.style.cursor = "pointer";
-    closeIcon.style.padding = "8px";
-    closeIcon.style.color = "gray";
-    closeIcon.onclick = () => { removeExistingPopups(); };
-    return closeIcon;
+function addCSS() {
+    const desiluCSS = document.createElement("style");
+    desiluCSS.type = "text/css";
+    desiluCSS.innerHTML = css;
+    document.body.appendChild(desiluCSS);
 }
 
-function getSearchBox() {
-    const searchBox = document.createElement("input");
-    searchBox.type = "text";
-    searchBox.className += " desilu-input";
-    searchBox.placeholder = "Search";
-
-    const css = document.createElement("style");
-    css.type = "text/css";
-    css.innerHTML = `
-    .desilu-input {
-        background-color: #f2f2f2;
-        border-radius: 16px;
-        outline: none;
-        border: 0;
-        padding-top: 4px;
-        padding-bottom: 4px;
-        padding-left: 8px;
-        padding-right: 8px;
-        color: #888888;
-    }
-    ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-        color: #aaaaaa;
-        opacity: 1; /* Firefox */
-    }
-
-    :-ms-input-placeholder { /* Internet Explorer 10-11 */
-        color: #aaaaaa;
-    }
-
-    ::-ms-input-placeholder { /* Microsoft Edge */
-        color: #aaaaaa;
-    }`;
-    document.body.appendChild(css);
-
-    return searchBox;
+function getRenderedHTML() {
+    return html.replace("${listItems}",
+        getListItems(
+            "background-color",
+            "color",
+            "background-color",
+            "display",
+            "background-color"));
 }
 
-function getAttributeList() {
-    const attributeList = document.createElement("ul");
-    attributeList.innerHTML = `
-    <li>testing</li>
-    <li>again</li>
-    <li>testing</li>
-    <li>again</li>
-    `;
-    return attributeList;
+function getListItems(...cssProperty: string[]) {
+    let items = "";
+    cssProperty.forEach((it) => {
+        items += `<li class="desilu-list-item">${it}</li>`;
+    });
+    return items;
 }
 
-function addColorPicker(layout: HTMLDivElement, targetElement: HTMLElement) {
-    AColorPicker.createPicker({
-        attachTo: currentPopup,
-        color: getComputedStyle(targetElement).color,
+function removeCurrentColorPicker() {
+    if (colorPicker && colorPicker.element) {
+        colorPicker.element.remove();
+    }
+}
+
+function addColorPicker(layout: string, targetElement: HTMLElement, targetElementProperty: string) {
+    if (!layout) {
+        throw new Error("No 'desilu-content-details' element to attach color picker to");
+    }
+    colorPicker = AColorPicker.createPicker({
+        attachTo: layout,
+        color: (getComputedStyle(targetElement) as any)[targetElementProperty],
         showAlpha: true,
-    }).onchange = (picker) => {
-        targetElement.style.color = picker.color.toString();
+    });
+    colorPicker.onchange = (picker) => {
+        (targetElement.style as any)[targetElementProperty] = picker.color.toString();
     };
 }

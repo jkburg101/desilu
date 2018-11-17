@@ -1,0 +1,51 @@
+.desilu-main-popup {
+    margin: 8px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    position: absolute;
+    box-shadow: 0 4px 10px rgba(0,0,0,.4);
+    padding: 8px;
+    border-radius: 16px;
+}
+
+.desilu-popup-header {
+    display: flex;
+    flex-direction: row;
+}
+
+.desilu-header-searchbox {
+    background-color: #f2f2f2;
+    border-radius: 16px;
+    outline: none;
+    border: 0;
+    width: 100%;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    color: #888888;
+}
+
+.desilu-header-x {
+    cursor: pointer;
+    padding: 8px;
+    color: gray;
+}
+
+.desilu-popup-content {
+    display: flex;
+    flex-direction: row;
+}
+
+.desilu-content-list {
+
+}
+
+.desilu-list-item {
+    padding: 8px;
+}
+
+.desilu-content-details {
+
+}
