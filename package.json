@@ -2,12 +2,13 @@
   "name": "desilu",
   "version": "1.0.2",
   "main": "dist/index.js",
-  "readme": "",
   "description": "Desilu is a Javascript library for making on-the-fly design changes to your website during development time.",
   "scripts": {
     "test": "jest",
-    "prepare": "npm run build",
-    "build": "tsc"
+    "copyFiles": "copyfiles --up 1 src/**/*.html src/**/*.css dist",
+    "build": "npm run clean && tsc && npm run copyFiles",
+    "clean": "rimraf dist",
+    "watch": "watch \"npm run build\" src"
   },
   "repository": {
     "type": "git",
@@ -26,13 +27,19 @@
   "homepage": "https://github.com/jkburg101/desilu#readme",
   "devDependencies": {
     "@types/jest": "^23.3.5",
+    "copyfiles": "^2.1.0",
     "jest": "^23.6.0",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.2",
     "ts-jest": "^23.10.4",
     "tslint": "^5.11.0",
-    "typescript": "^3.1.3"
+    "typescript": "^3.1.3",
+    "watch": "^1.0.2"
   },
   "dependencies": {
+    "@types/node": "^10.12.7",
     "a-color-picker": "^1.1.3",
-    "eslint": "^5.7.0"
+    "eslint": "^5.7.0",
+    "npm-watch": "^0.4.0"
   }
 }
