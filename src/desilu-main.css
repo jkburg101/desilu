@@ -1,20 +1,24 @@
 .desilu-main-popup {
-    height: 400px;
+    height: 360px;
     margin: 8px;
     display: flex;
     flex-direction: column;
     background-color: white;
     position: absolute;
     box-shadow: 0 4px 10px rgba(0,0,0,.4);
-    padding: 8px;
     border-radius: 16px;
+    overflow: hidden;
 }
 
 .desilu-popup-header {
     display: flex;
-    margin-bottom: 16px;
-    flex-basis: 10%;
+    padding-left: 12px;
+    padding-right: 8px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    flex-basis: 15%;
     flex-direction: row;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
 }
 
 .desilu-header-searchbox {
@@ -39,42 +43,73 @@
 .desilu-popup-content {
     display: flex;
     flex-direction: row;
-    flex-basis: 90%;
+    flex-basis: 85%;
 }
 
-.desilu-content-list {
-    overflow: scroll;
+.desilu-property-list {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-right: 16px;
+    margin-right: 16px;
+    padding-top: 8px;
+}
+
+.desilu-active-property {
+    background-color: #f2f2f2;
+}
+
+.desilu-inactive-property {
+    background-color: none;
 }
 
 .desilu-list-item {
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-bottom: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-radius: 0px 24px 24px 0px; /* standards-compliant: (IE) */
 }
 
-.desilu-content-details {
-    overflow: scroll;
+.desilu-property-choices {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 8px;
 }
 
 .desilu-choice-item {
+    cursor: pointer;
+    font-size: 18px;
     padding-left: 8px;
     padding-right: 8px;
-    padding-bottom: 8px;
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
+
+.desilu-active-choice {
+    background-color: #f2f2dd;
+}
+
+.desilu-inactive-choice {
+    background-color: none;
+}
+
 
 /*SCROLLBARS*/
 ::-webkit-scrollbar
 {
-  width: 6px;  /* for vertical scrollbars */
-  height: 6px; /* for horizontal scrollbars */
+  width: 4px;  /* for vertical scrollbars */
+  height: 4px; /* for horizontal scrollbars */
 }
 
 ::-webkit-scrollbar-track
 {
-  background: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 ::-webkit-scrollbar-thumb
 {
-  background: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.3);
 }
+

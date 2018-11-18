@@ -6,7 +6,7 @@ import {cssProperties, CSSStyle, VALUE_TYPE} from "./types/css-style";
 const allElements = document.getElementsByTagName("*");
 
 let currentPopup: HTMLDivElement;
-let currentlySelectedProperty: string;
+let currentlySelectedProperty: string = "color";
 let colorPicker: AColorPicker.ACPController;
 const propertyNames = cssProperties.map((it) => it.name);
 let currentlyVisiblePropertyNames = propertyNames.slice();
@@ -16,16 +16,18 @@ window.addEventListener("resize", (event) => {
 });
 
 addCSS();
+addRightClickListeners();
 
-for (const eachElement of allElements) {
-    eachElement.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const element = event.target as HTMLSelectElement;
-        console.log(getComputedStyle(element));
-        addPopupBox(element);
-        return false;
-    }, false);
+function addRightClickListeners() {
+    for (const eachElement of allElements) {
+        eachElement.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const element = event.target as HTMLSelectElement;
+            addPopupBox(element);
+            return false;
+        }, false);
+    }
 }
 
 function addPopupBox(targetElement: HTMLElement) {
@@ -35,19 +37,14 @@ function addPopupBox(targetElement: HTMLElement) {
     currentPopup.className += " desilu-main-popup";
     currentPopup.innerHTML = getRenderedHTML();
     document.getElementsByTagName("body")[0].appendChild(currentPopup);
-    enableSearch();
+    enableSearch(targetElement);
     const closeButton = document.querySelector(".desilu-header-x") as HTMLElement;
     if (closeButton) {
         closeButton.onclick = () => removeExistingPopups();
     }
-    const allPropertyItems = document.querySelectorAll(".desilu-list-item");
-    allPropertyItems.forEach((it) => {
-        (it as HTMLElement).onclick = () => {
-            currentlySelectedProperty = it.innerHTML;
-            removeCurrentColorPicker();
-            addPropertyChoices(".desilu-content-details", targetElement, currentlySelectedProperty);
-        };
-    });
+    addPropertyChoices(".desilu-property-choices", targetElement, currentlySelectedProperty);
+    setPropertyListClickEvent(targetElement);
+    updatePropertyListActiveStatuses();
     // coordinates must be calculated after width of popup is determined
     const bottom = Math.floor(elementCoordinates.bottom);
     const centerOfTarget = Math.floor(elementCoordinates.left) + elementCoordinates.width / 2;
@@ -76,7 +73,7 @@ function getRenderedHTML() {
 
 function getListItems(cssProperty: string[]) {
     let items = "";
-    cssProperty.forEach((it) => {
+    cssProperty.forEach((it, index) => {
         items += `<li class="desilu-list-item">${it}</li>`;
     });
     return items;
@@ -99,8 +96,15 @@ function addPropertyChoices(layout: string, targetElement: HTMLElement, targetEl
             property.values.forEach((it) => choiceItems += `<li class="desilu-choice-item">${it}</li>`);
             choicesDiv.innerHTML = choiceItems + "</ul>";
 
-            document.querySelectorAll(".desilu-choice-item").forEach((it) => {
-                (it as HTMLElement).onclick = () => (targetElement.style as any)[targetElementProperty] = it.innerHTML;
+            document.querySelectorAll(".desilu-choice-item").forEach((it, index) => {
+                const choice = it as HTMLElement;
+                choice.className = "desilu-choice-item";
+                if (index === 2) {
+                    choice.className += " desilu-active-choice";
+                } else {
+                    choice.className += " desilu-inactive-choice";
+                }
+                choice.onclick = () => (targetElement.style as any)[targetElementProperty] = choice.innerHTML;
             });
         }
     }
@@ -108,7 +112,7 @@ function addPropertyChoices(layout: string, targetElement: HTMLElement, targetEl
 
 function addColorPicker(layout: string, targetElement: HTMLElement, targetElementProperty: string) {
     if (!layout) {
-        throw new Error("No 'desilu-content-details' element to attach color picker to");
+        throw new Error("No 'desilu-property-choices' element to attach color picker to");
     }
     const choicesDiv = document.querySelector(layout);
     if (choicesDiv) {
@@ -122,9 +126,11 @@ function addColorPicker(layout: string, targetElement: HTMLElement, targetElemen
     colorPicker.onchange = (picker) => {
         (targetElement.style as any)[targetElementProperty] = picker.color.toString();
     };
+    colorPicker.element.style.marginTop = "8px";
+    colorPicker.element.style.marginRight = "8px";
 }
 
-function enableSearch() {
+function enableSearch(targetElement: HTMLElement) {
     const searchText = document.querySelector(".desilu-header-searchbox") as HTMLInputElement;
     if (searchText) {
         searchText.oninput = () => {
@@ -132,8 +138,38 @@ function enableSearch() {
             currentlyVisiblePropertyNames = currentlyVisiblePropertyNames.filter((it) => {
                 return it.indexOf(searchText.value) !== -1;
             });
-            const list = document.querySelector(".desilu-content-list") as HTMLElement;
+            const list = document.querySelector(".desilu-property-list") as HTMLElement;
             list.innerHTML = `<ul>${getListItems(currentlyVisiblePropertyNames)}</ul>`;
+            setPropertyListClickEvent(targetElement);
+            updatePropertyListActiveStatuses();
         };
     }
+}
+
+function setPropertyListClickEvent(targetElement: HTMLElement) {
+    const allPropertyItems = document.querySelectorAll(".desilu-list-item");
+    allPropertyItems.forEach((it) => {
+        (it as HTMLElement).onclick = () => {
+            currentlySelectedProperty = it.innerHTML;
+            removeCurrentColorPicker();
+            addPropertyChoices(".desilu-property-choices", targetElement, currentlySelectedProperty);
+            updatePropertyListActiveStatuses();
+        };
+    });
+}
+
+function updatePropertyListActiveStatuses() {
+    document.querySelectorAll(".desilu-list-item").forEach((it) => {
+        const propertyItem = it as HTMLElement;
+        let activeOrInactive;
+        if (propertyItem.innerHTML === currentlySelectedProperty) {
+            activeOrInactive = " desilu-active-property";
+        } else {
+            activeOrInactive = " desilu-inactive-property";
+        }
+        propertyItem.className = propertyItem.className
+                                             .replace(" desilu-active-property", "")
+                                             .replace(" desilu-inactive-property", "");
+        propertyItem.className += activeOrInactive;
+    });
 }
