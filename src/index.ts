@@ -7,6 +7,7 @@ const allElements = document.getElementsByTagName("*");
 
 let currentPopup: HTMLDivElement;
 let currentlySelectedProperty: string = "color";
+let currentlySelectedChoice: string | null;
 let colorPicker: AColorPicker.ACPController;
 const propertyNames = cssProperties.map((it) => it.name);
 let currentlyVisiblePropertyNames = propertyNames.slice();
@@ -88,6 +89,7 @@ function removeCurrentColorPicker() {
 function addPropertyChoices(layout: string, targetElement: HTMLElement, targetElementProperty: string) {
     const property = cssProperties[propertyNames.indexOf(currentlySelectedProperty)];
     if (property.valueType === VALUE_TYPE.COLOR) {
+        currentlySelectedChoice = null;
         addColorPicker(layout, targetElement, targetElementProperty);
     } else if (property.valueType === VALUE_TYPE.DEFINED) {
         const choicesDiv = document.querySelector(layout);
@@ -99,12 +101,12 @@ function addPropertyChoices(layout: string, targetElement: HTMLElement, targetEl
             document.querySelectorAll(".desilu-choice-item").forEach((it, index) => {
                 const choice = it as HTMLElement;
                 choice.className = "desilu-choice-item";
-                if (index === 2) {
-                    choice.className += " desilu-active-choice";
-                } else {
-                    choice.className += " desilu-inactive-choice";
-                }
-                choice.onclick = () => (targetElement.style as any)[targetElementProperty] = choice.innerHTML;
+                updateChoiceListActiveStatuses();
+                choice.onclick = () => {
+                    (targetElement.style as any)[targetElementProperty] = choice.innerHTML;
+                    currentlySelectedChoice = choice.innerHTML;
+                    updateChoiceListActiveStatuses();
+                };
             });
         }
     }
@@ -151,6 +153,7 @@ function setPropertyListClickEvent(targetElement: HTMLElement) {
     allPropertyItems.forEach((it) => {
         (it as HTMLElement).onclick = () => {
             currentlySelectedProperty = it.innerHTML;
+            currentlySelectedChoice = (getComputedStyle(targetElement) as any)[currentlySelectedProperty];
             removeCurrentColorPicker();
             addPropertyChoices(".desilu-property-choices", targetElement, currentlySelectedProperty);
             updatePropertyListActiveStatuses();
@@ -171,5 +174,21 @@ function updatePropertyListActiveStatuses() {
                                              .replace(" desilu-active-property", "")
                                              .replace(" desilu-inactive-property", "");
         propertyItem.className += activeOrInactive;
+    });
+}
+
+function updateChoiceListActiveStatuses() {
+    document.querySelectorAll(".desilu-choice-item").forEach((it) => {
+        const choiceItem = it as HTMLElement;
+        let activeOrInactive;
+        if (choiceItem.innerHTML === currentlySelectedChoice) {
+            activeOrInactive = " desilu-active-choice";
+        } else {
+            activeOrInactive = " desilu-inactive-choice";
+        }
+        choiceItem.className = choiceItem.className
+                                             .replace(" desilu-active-choice", "")
+                                             .replace(" desilu-inactive-choice", "");
+        choiceItem.className += activeOrInactive;
     });
 }

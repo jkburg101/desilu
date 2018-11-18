@@ -1,6 +1,6 @@
 {
   "name": "desilu",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "main": "dist/index.js",
   "description": "Desilu is a Javascript library for making on-the-fly design changes to your website during development time.",
   "scripts": {
